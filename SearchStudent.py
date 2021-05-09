@@ -3,6 +3,7 @@ from tkinter import ttk
 from misc import SISMisc
 import csv
 
+
 class SearchStudentFrame:
     def __init__(self, frame):
         self.search_frame = frame

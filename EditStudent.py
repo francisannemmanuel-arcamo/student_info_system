@@ -1,13 +1,14 @@
 from tkinter import *
 from tkinter import ttk
 from tkinter import messagebox
-# from misc import SISMisc
+from misc import SISMisc
 import csv
 
 
 class EditStudentFrame:
-    def __init__(self, frame):
+    def __init__(self, frame, table):
         self.edit_frame = frame
+        self.display_table = table
 
         self.id_no = StringVar()
         self.name = StringVar()
@@ -85,19 +86,40 @@ class EditStudentFrame:
         msg = messagebox.askquestion("Update Student", "Are you sure you want to edit the student's information")
         if msg == "yes":
             list = []
-            with open('studentlist.csv', "r", encoding="utf-8") as StudData:
-                stud_data = csv.reader(StudData, delimiter=",")
-                for stud in stud_data:
-                    if stud == self.rows:
-                        stud = [self.id_no.get(), self.name.get(), self.course.get(), self.year.get(),
-                                self.gender.get()]
-                    list.append(stud)
-                with open('studentlist.csv', 'w+', newline='') as csvFile:
-                    writer = csv.writer(csvFile)
-                    writer.writerows(list)
-                    self.clear_data()
-                    messagebox.showinfo("Success!", "Student information has been updated!")
+            if self.name.get() == "" or self.id_no.get() == "" or self.year == "" or self.course.get() == "" \
+                    or self.gender.get() == "":
+                messagebox.showerror("Error", "Please fill out all fields")
+            elif SISMisc.id_checker(self.id_no.get()):
+                with open('studentlist.csv', "r", encoding="utf-8") as StudData:
+                    stud_data = csv.reader(StudData, delimiter=",")
+                    for stud in stud_data:
+                        if stud == self.rows:
+                            stud = [self.id_no.get(), self.name.get(), self.course.get(), self.year.get(),
+                                    self.gender.get()]
+                        list.append(stud)
+                    with open('studentlist.csv', 'w+', newline='') as csvFile:
+                        writer = csv.writer(csvFile)
+                        writer.writerows(list)
+                messagebox.showinfo("Success!", "Student information has been updated!")
+                self.clear_data()
+                SISMisc.display_student_table(self.display_table)
             return
         else:
             return
 
+    def select_stud(self):
+        cursor_row = self.display_table.focus()
+        contents = self.display_table.item(cursor_row)
+        rows = contents['values']
+        self.clear_data()
+        try:
+            self.edit_name_entry.insert(0, rows[1])
+            self.edit_id_entry.insert(0, rows[0])
+            self.edit_year_combo.insert(0, rows[3])
+            self.edit_course_entry.insert(0, rows[2])
+            self.edit_gender_combo.insert(0, rows[4])
+            self.rows = rows
+            return
+        except IndexError:
+            messagebox.showerror("Error", "Select a student first")
+            return

@@ -12,3 +12,15 @@ class SISMisc:
         else:
             return True
         return False
+
+    def display_student_table(display_table):
+        display_table.delete(*display_table.get_children())
+        with open('studentlist.csv', "r", encoding="utf-8") as StudData:
+            stud_data = csv.reader(StudData, delimiter=",")
+            next(stud_data)
+            for stud in stud_data:
+                data = []
+                if len(stud) > 1:
+                    for i in stud:
+                        data.append(i)
+                    display_table.insert('', 'end', values=data)

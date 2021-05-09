@@ -6,10 +6,10 @@ import csv
 
 
 class AddStudentFrame:
-    def __init__(self, frame):
+    def __init__(self, frame, table):
         self.add_frame = frame
+        self.display_table = table
 
-        #
         self.id_no = StringVar()
         self.name = StringVar()
         self.course = StringVar()
@@ -86,7 +86,20 @@ class AddStudentFrame:
                     writer = csv.writer(csvFile)
                     writer.writerows([studdata])
                 messagebox.showinfo("Success!", "Student added to database!")
+                SISMisc.display_student_table(self.display_table)
                 self.clear_data()
             return
         else:
             return
+
+    def display_student_table(self):
+        self.display_table.delete(*self.display_table.get_children())
+        with open('studentlist.csv', "r", encoding="utf-8") as StudData:
+            stud_data = csv.reader(StudData, delimiter=",")
+            next(stud_data)
+            for stud in stud_data:
+                data = []
+                if len(stud) > 1:
+                    for i in stud:
+                        data.append(i)
+                    self.display_table.insert('', 'end', values=data)

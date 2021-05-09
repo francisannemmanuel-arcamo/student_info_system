@@ -4,15 +4,19 @@ from tkinter import messagebox
 import csv
 import os
 
+from AddStudent import AddStudentFrame
+from SearchStudent import SearchStudentFrame
+
+
 class Student:
     def __init__(self, frame):
         self.frame = frame
         self.frame.title("Student Information System")
         self.frame.geometry("1155x650+95+25")
         self.frame.resizable(False, False)
-
         self.data = dict()
         self.temp = dict()
+        self.filename = 'studentlist.csv'
 
         # variables for student data
         self.id_no = StringVar()
@@ -22,7 +26,7 @@ class Student:
         self.gender = StringVar()
         self.rows = []
 
-        with open('studentlist.csv', 'w') as csvFile:
+        with open(self.filename, 'w') as csvFile:
             writer = csv.writer(csvFile)
             writer.writerows([["ID Number", "Name", "Course", "Year Level", "Gender"]])
 
@@ -42,6 +46,7 @@ class Student:
         self.bg_box = Label(self.left_frame, bg="#A51d23", highlightbackground="#A51d23", highlightthickness=2)
         self.bg_box.place(x=25, y=145, width=400, height=390)
         self.fg_box = Frame(self.left_frame, bg="white", highlightbackground="#A51d23", highlightthickness=2)
+
         self.add_frame = Frame(self.left_frame, bg="white", highlightbackground="#A51d23", highlightthickness=2)
         self.edit_frame = Frame(self.left_frame, bg="white", highlightbackground="#A51d23", highlightthickness=2)
         self.delete_frame = Frame(self.left_frame, bg="white", highlightbackground="#A51d23", highlightthickness=2)
@@ -58,37 +63,13 @@ class Student:
         self.delete_button_img = PhotoImage(file=r"deletestudent.png").subsample(4, 4)
         self.search_button_img = PhotoImage(file=r"searchstudent.png").subsample(4, 4)
         self.add_stud_button = Button(self.left_frame, image=self.add_button_img, bg="white",
-                                      command=lambda: [self.add_student_gui(), self.clear_data()])
+                                      command=self.add_student_gui)
         self.edit_stud_button = Button(self.left_frame, image=self.edit_button_img, bg="white",
                                        command=lambda: [self.edit_student_gui(), self.clear_data()])
         self.delete_stud_button = Button(self.left_frame, image=self.delete_button_img, bg="white",
                                          command=lambda: [self.delete_student_gui(), self.clear_data()])
         self.search_stud_button = Button(self.left_frame, image=self.search_button_img, bg="white",
                                          command=lambda: [self.search_student_gui(), self.clear_data()])
-
-        # Add
-        self.add_name_entry = Entry(self.add_frame, textvariable=self.name, highlightthickness=2,
-                                    highlightbackground="#A51d23", font=("Bebas Neue", 20))
-
-        self.add_id_entry = Entry(self.add_frame, textvariable=self.id_no, highlightthickness=2,
-                                  highlightbackground="#A51d23", font=("Bebas Neue", 20))
-        self.add_year_combo = ttk.Combobox(self.add_frame, textvariable=self.year, font=("Bebas Neue", 20),
-                                           values=[
-                                                   "1st Year",
-                                                   "2nd Year",
-                                                   "3rd Year",
-                                                   "4th Year",
-                                                   "5th Year"])
-        self.add_course_entry = Entry(self.add_frame, textvariable=self.course, highlightthickness=2,
-                                      highlightbackground="#A51d23", font=("Bebas Neue", 18))
-        self.add_gender_combo = ttk.Combobox(self.add_frame, textvariable=self.gender, font=("Bebas Neue", 20),
-                                             values=[
-                                                     "Male",
-                                                     "Female",
-                                                     "Transgender Male",
-                                                     "Transgender Female",
-                                                     "Non-conforming",
-                                                     "Other"])
 
         # Edit
         self.edit_name_entry = Entry(self.edit_frame, textvariable=self.name, highlightthickness=2,
@@ -112,31 +93,6 @@ class Student:
                                                       "Transgender Female",
                                                       "Non-conforming",
                                                       "Other"])
-
-        # Search Frame
-        self.search_bar_entry = Entry(self.search_frame, highlightthickness=2, highlightbackground="#A51d23",
-                                      font=("Bebas Neue", 18))
-        self.srch_btn_img = PhotoImage(file=r"search_button_img.png")
-        self.srch_result_msg = Label(self.search_frame, text="Gender: ", bg="white", fg="#A51d23", font=("Oswald", 12))
-        self.search_result_frame = Frame(self.search_frame, bg="white", highlightthickness=2,
-                                         highlightbackground="black")
-        #search results table for
-        scrll_x = Scrollbar(self.search_result_frame, orient=HORIZONTAL)
-        self.results_table = ttk.Treeview(self.search_result_frame, xscrollcommand=scrll_x.set,
-                                          columns=("name", "course", "year", "gender"))
-        scrll_x.pack(side=BOTTOM, fill=X)
-        scrll_x.config(command=self.results_table.xview)
-        self.results_table.heading("name", text="Name")
-        self.results_table.heading("course", text="Course")
-        self.results_table.heading("year", text="Year")
-        self.results_table.heading("gender", text="Gender")
-        self.results_table['show'] = 'headings'
-        self.results_table.column("name", width=140)
-        self.results_table.column("course", width=60)
-        self.results_table.column("year", width=60)
-        self.results_table.column("gender", width=50)
-        self.srchrslts_label = Label(self.search_frame, text="  Search Result", anchor='w', bg="#A51d23", fg="white",
-                                     font=("Bebas Neue", 18))
 
         # Delete Frame
         self.del_stud_name = Label(self.delete_frame, fg="black", bg="white", font=("Bebas Neue", 16), anchor='w')
@@ -191,7 +147,7 @@ class Student:
 
         self.homepage()
 
-    #Code for homepage
+    # Code for homepage
     def homepage(self):
         self.home_button.place_forget()
         self.hide_widgets()
@@ -213,7 +169,7 @@ class Student:
         self.author.place(x=30, y=320, width=250, height=40)
         self.display_table.pack_forget()
 
-    #Display attributes common to different frames
+    # Display attributes common to different frames
     def display_attributes(self):
         self.sis_label.config(font=("Bebas Neue", 30), fg="#A51d23")
         self.sis_label.place(x=80, y=10, height=50)
@@ -223,13 +179,14 @@ class Student:
         self.display_lbldsgn.place(x=550, y=15, width=100, height=40)
         self.display_label.place(x=10, y=15, width=650, height=40)
         self.display_table.pack(fill=BOTH, expand=1)
-        #buttons
+
+    # buttons
         self.add_stud_button.place(x=30, y=10, width=75, height=75)
         self.edit_stud_button.place(x=130, y=10, width=75, height=75)
         self.delete_stud_button.place(x=230, y=10, width=75, height=75)
         self.search_stud_button.place(x=330, y=10, width=75, height=75)
 
-    #Hide frames whenever using another
+    # Hide frames whenever using another
     def hide_widgets(self):
         self.add_frame.place_forget()
         self.edit_frame.place_forget()
@@ -237,36 +194,10 @@ class Student:
         self.search_frame.place_forget()
 
     def add_student_gui(self):
-        # add_student_interface
         self.heading_label.config(text="   ADD STUDENT")
         self.hide_widgets()
         self.display_attributes()
-        self.add_frame.place(x=20, y=120, width=400, height=410)
-
-        #attributes of the add student feature
-        name_label = Label(self.add_frame, text="Name:", font=("Bebas Neue", 20), bg="#A51d23", fg="white")
-        name_label.place(x=20, y=50, width=90, height=40)
-        self.add_name_entry.place(x=110, y=50, width=270, height=40)
-        id_no_label = Label(self.add_frame, text="ID No.:", font=("Bebas Neue", 20), bg="#A51d23", fg="white")
-        id_no_label.place(x=20, y=100, width=90, height=40)
-        self.add_id_entry.place(x=110, y=100, width=270, height=40)
-        year_label = Label(self.add_frame, text="Year:", font=("Bebas Neue", 20), bg="#A51d23", fg="white")
-        year_label.place(x=20, y=150, width=90, height=40)
-        self.add_year_combo.place(x=110, y=150, width=270, height=40)
-        course_label = Label(self.add_frame, text="Course:", font=("Bebas Neue", 20), bg="#A51d23", fg="white")
-        course_label.place(x=20, y=200, width=90, height=40)
-        self.add_course_entry.place(x=110, y=200, width=270, height=40)
-        gender_label = Label(self.add_frame, text="Gender:", font=("Bebas Neue", 20), bg="#A51d23", fg="white")
-        gender_label.place(x=20, y=250, width=90, height=40)
-        self.add_gender_combo.place(x=110, y=250, width=270, height=40)
-
-        #buttons on add student
-        add_info_button = Button(self.add_frame, command=self.add_student, text="Add", bg="#A51d23", fg="white",
-                                 font=("Bebas Neue", 20))
-        add_info_button.place(x=170, y=330, width=90, height=30)
-        clear_info_button = Button(self.add_frame, command=self.clear_data, text="Clear", bg="#A51d23", fg="white",
-                                   font=("Bebas Neue", 20))
-        clear_info_button.place(x=280, y=330, width=90, height=30)
+        AddStudentFrame(self.add_frame)
 
     def edit_student_gui(self):
         # edit_student_interface
@@ -283,7 +214,7 @@ class Student:
                                  text="Select", bg="#A51d23", fg="white", font=("Bebas Neue", 20))
         choose_stud_btn.place(x=280, y=28, width=90, height=30)
 
-        #attributes on edit student feature
+        # attributes on edit student feature
         name_label = Label(self.edit_frame, text="Name:", font=("Bebas Neue", 20), bg="#A51d23", fg="white")
         name_label.place(x=20, y=80, width=90, height=40)
         self.edit_name_entry.place(x=110, y=80, width=270, height=40)
@@ -300,7 +231,7 @@ class Student:
         gender_label.place(x=20, y=280, width=90, height=40)
         self.edit_gender_combo.place(x=110, y=280, width=270, height=40)
 
-        #buttons for add student feature
+        # buttons for add student feature
         update_info_button = Button(self.edit_frame, command=self.update_student, text="Update", bg="#A51d23",
                                     fg="white", font=("Bebas Neue", 20))
         update_info_button.place(x=170, y=350, width=90, height=30)
@@ -309,20 +240,10 @@ class Student:
         clear_info_button.place(x=280, y=350, width=90, height=30)
 
     def search_student_gui(self):
-        self.clear_data()
         self.heading_label.config(text="   SEARCH STUDENT")
         self.display_attributes()
         self.hide_widgets()
-        self.search_frame.place(x=20, y=120, width=400, height=410)
-        id_no_label = Label(self.search_frame, text="ID #", bg="#A51d23", fg="white", font=("Bebas Neue", 20))
-        id_no_label.place(x=30, y=45, width=50, height=40)
-        self.search_bar_entry.place(x=80, y=45, width=250, height=40)
-        search_button = Button(self.search_frame, command=self.search_student,
-                               image=self.srch_btn_img, bg="#A51d23", fg="white", font=("Bebas Neue", 20))
-        search_button.place(x=330, y=45, width=40, height=40)
-        self.srchrslts_label.place_forget()
-        self.search_result_frame.place_forget()
-        self.srch_result_msg.place_forget()
+        SearchStudentFrame(self.search_frame)
 
     def delete_student_gui(self):
         self.clear_data()
@@ -370,32 +291,57 @@ class Student:
                         data.append(i)
                     self.display_table.insert('', 'end', values=data)
 
+    def update_student(self):
+        msg = messagebox.askquestion("Update Student", "Are you sure you want to edit the student's information")
+        if msg == "yes":
+            list = []
+            with open('studentlist.csv', "r", encoding="utf-8") as StudData:
+                stud_data = csv.reader(StudData, delimiter=",")
+                for stud in stud_data:
+                    if stud == self.rows:
+                        stud = [self.id_no.get(), self.name.get(), self.course.get(), self.year.get(),
+                                self.gender.get()]
+                    list.append(stud)
+                with open('studentlist.csv', 'w+', newline='') as csvFile:
+                    writer = csv.writer(csvFile)
+                    writer.writerows(list)
+                    self.clear_data()
+                    messagebox.showinfo("Success!", "Student information has been updated!")
+            self.display_student_table()
+            return
+        else:
+            return
+
+    def delete_student(self):
+        msg = messagebox.askquestion('Delete Student', 'Are you sure you want to delete the student')
+        if msg == "yes":
+            list = []
+            with open('studentlist.csv', "r", encoding="utf-8") as StudData:
+                data = csv.reader(StudData, delimiter=",")
+                for stud in data:
+                    if stud != self.rows:
+                        list.append(stud)
+                with open('studentlist.csv', 'w+', newline='') as csvFile:
+                    writer = csv.writer(csvFile)
+                    writer.writerows(list)
+                    self.clear_data()
+                    messagebox.showinfo("Success!", "Student has been deleted!")
+            self.display_student_table()
+            return
+        else:
+            return
+
     def clear_data(self):
-        self.add_id_entry.delete(0, END)
-        self.add_name_entry.delete(0, END)
-        self.add_course_entry.delete(0, END)
-        self.add_year_combo.delete(0, END)
-        self.add_gender_combo.delete(0, END)
         self.edit_id_entry.delete(0, END)
         self.edit_name_entry.delete(0, END)
         self.edit_year_combo.delete(0, END)
         self.edit_course_entry.delete(0, END)
         self.edit_gender_combo.delete(0, END)
-        self.search_bar_entry.delete(0, END)
         self.del_stud_name.config(text="")
         self.del_stud_id.config(text="")
         self.del_stud_course.config(text="")
         self.del_stud_year.config(text="")
         self.del_stud_gender.config(text="")
-
-    def id_checker(self, id_num):
-        if len(id_num) != 9:
-            messagebox.showerror("Error", "Invalid ID Number")
-        elif id_num[4] != '-' or not id_num.replace("-", "").isdigit():
-            messagebox.showerror("Error", "Invalid ID Number")
-        else:
-            return True
-        return False
 
     def select_stud(self):
         cursor_row = self.display_table.focus()
@@ -418,65 +364,6 @@ class Student:
         except IndexError:
             messagebox.showerror("Error", "Select a student first")
             return
-
-    def update_student(self):
-        msg = messagebox.askquestion("Update Student", "Are you sure you want to edit the student's information")
-        if msg == "yes":
-            list = []
-            with open('studentlist.csv', "r", encoding="utf-8") as StudData:
-                stud_data = csv.reader(StudData, delimiter=",")
-                for stud in stud_data:
-                    if stud == self.rows:
-                        stud = [self.id_no.get(), self.name.get(), self.course.get(), self.year.get(),
-                                self.gender.get()]
-                    list.append(stud)
-                with open('studentlist.csv', 'w+', newline='') as csvFile:
-                    writer = csv.writer(csvFile)
-                    writer.writerows(list)
-                    self.clear_data()
-                    messagebox.showinfo("Success!", "Student information has been updated!")
-            self.display_student_table()
-            return
-        else:
-            return
-
-    def add_student(self):
-        msg = messagebox.askquestion('Add Student', 'Are you sure you want to add the student')
-        if msg == "yes":
-            if self.name.get() == "" or self.id_no.get() == "" or self.year == "" or self.course.get() == "" \
-                    or self.gender.get() == "":
-                messagebox.showerror("Error", "Please fill out all fields")
-            elif self.id_checker(self.id_no.get()):
-                studdata = [self.id_no.get(), self.name.get(), self.course.get(), self.year.get(), self.gender.get()]
-                with open('studentlist.csv', 'a+', newline='') as csvFile:
-                    writer = csv.writer(csvFile)
-                    writer.writerows([studdata])
-                messagebox.showinfo("Success!", "Student added to database!")
-                self.display_student_table()
-                self.clear_data()
-            return
-        else:
-            return
-
-    def search_student(self):
-        if self.id_checker(self.search_bar_entry.get()):
-            self.srchrslts_label.place_forget()
-            self.search_result_frame.place_forget()
-            self.srch_result_msg.place(x=30, y=100, height=20, width=100)
-
-            with open('studentlist.csv', "r", encoding="utf-8") as StudData:
-                studinfo = csv.reader(StudData)
-                for stud in studinfo:
-                    if len(stud) > 0:
-                        if stud[0] == self.search_bar_entry.get():
-                            self.results_table.delete(*self.results_table.get_children())
-                            self.srch_result_msg.config(text="1 record found")
-                            self.srchrslts_label.place(x=30, y=130, width=340, height=35)
-                            self.search_result_frame.place(x=30, y=160, width=340, height=200)
-                            self.results_table.insert('', 'end', values=[stud[1], stud[2], stud[3], stud[4]])
-                            self.results_table.pack(fill=BOTH, expand=1)
-                            return
-                self.srch_result_msg.config(text="No records found")
 
 
 root = Tk()

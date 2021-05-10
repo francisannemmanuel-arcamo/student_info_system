@@ -1,8 +1,8 @@
 from tkinter import *
 from tkinter import messagebox
-import csv
 
 from misc import SISMisc
+from Student import Student
 
 
 class DeleteStudentFrame:
@@ -10,12 +10,16 @@ class DeleteStudentFrame:
         self.delete_frame = frame
         self.display_table = table
 
+        self.stud_class = Student()
+        self.data = self.stud_class.data
+
         self.id_no = StringVar()
         self.name = StringVar()
         self.course = StringVar()
         self.year = StringVar()
         self.gender = StringVar()
         self.rows = []
+        self.select = True
 
         # Delete Frame
         self.del_stud_name = Label(self.delete_frame, fg="black", bg="white", font=("Bebas Neue", 16), anchor='w')
@@ -65,19 +69,16 @@ class DeleteStudentFrame:
     def delete_student(self):
         msg = messagebox.askquestion('Delete Student', 'Are you sure you want to delete the student')
         if msg == "yes":
-            list = []
-            with open('studentlist.csv', "r", encoding="utf-8") as StudData:
-                data = csv.reader(StudData, delimiter=",")
-                for stud in data:
-                    if stud != self.rows:
-                        list.append(stud)
-                with open('studentlist.csv', 'w+', newline='') as csvFile:
-                    writer = csv.writer(csvFile)
-                    writer.writerows(list)
-                    self.clear_data()
-                    messagebox.showinfo("Success!", "Student has been deleted!")
-                    SISMisc.display_student_table(self.display_table)
-            return
+            if not self.select:
+                messagebox.showerror("Error", "Select a student first")
+            else:
+                self.data.pop(self.rows[0], None)
+                self.stud_class.data_to_csv()
+                messagebox.showinfo("Success!", "Student has been deleted!")
+                SISMisc.display_student_table(self.display_table)
+                self.clear_data()
+
+                return
         else:
             return
 
@@ -85,15 +86,17 @@ class DeleteStudentFrame:
         cursor_row = self.display_table.focus()
         contents = self.display_table.item(cursor_row)
         rows = contents['values']
-        self.clear_data()
-        try:
+
+        if rows == "":
+            messagebox.showerror("Error", "Select a student first")
+            self.select = False
+            return
+        else:
             self.del_stud_name.config(text=rows[1])
             self.del_stud_id.config(text=rows[0])
             self.del_stud_year.config(text=rows[3])
             self.del_stud_course.config(text=rows[2])
             self.del_stud_gender.config(text=rows[4])
             self.rows = rows
-            return
-        except IndexError:
-            messagebox.showerror("Error", "Select a student first")
+            self.select = True
             return

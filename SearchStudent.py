@@ -1,13 +1,17 @@
 from tkinter import *
 from tkinter import ttk
-import csv
 
 from misc import SISMisc
+from Student import Student
 
 
 class SearchStudentFrame:
     def __init__(self, frame):
         self.search_frame = frame
+
+        self.studclass = Student()
+        self.data = self.studclass.data
+        self.filename = self.studclass.filename
 
         # Search Frame
         self.search_bar_entry = Entry(self.search_frame, highlightthickness=2, highlightbackground="#A51d23",
@@ -45,6 +49,7 @@ class SearchStudentFrame:
         search_button = Button(self.search_frame, command=self.search_student,
                                image=self.srch_btn_img, bg="#A51d23", fg="white", font=("Bebas Neue", 20))
         search_button.place(x=330, y=45, width=40, height=40)
+
         self.srchrslts_label.place_forget()
         self.search_result_frame.place_forget()
         self.srch_result_msg.place_forget()
@@ -55,16 +60,15 @@ class SearchStudentFrame:
             self.search_result_frame.place_forget()
             self.srch_result_msg.place(x=30, y=100, height=20, width=100)
 
-            with open('studentlist.csv', "r", encoding="utf-8") as StudData:
-                studinfo = csv.reader(StudData)
-                for stud in studinfo:
-                    if len(stud) > 0:
-                        if stud[0] == self.search_bar_entry.get():
-                            self.results_table.delete(*self.results_table.get_children())
-                            self.srch_result_msg.config(text="1 record found")
-                            self.srchrslts_label.place(x=30, y=130, width=340, height=35)
-                            self.search_result_frame.place(x=30, y=160, width=340, height=200)
-                            self.results_table.insert('', 'end', values=[stud[1], stud[2], stud[3], stud[4]])
-                            self.results_table.pack(fill=BOTH, expand=1)
-                            return
+            if self.search_bar_entry.get() in self.data:
+                stud = list(self.data[self.search_bar_entry.get()].values())
+                self.results_table.delete(*self.results_table.get_children())
+                self.srch_result_msg.config(text="1 record found")
+                self.srchrslts_label.place(x=30, y=130, width=340, height=35)
+                self.search_result_frame.place(x=30, y=160, width=340, height=200)
+                self.results_table.insert('', 'end', values=[stud[0], stud[1], stud[2], stud[3]])
+                self.results_table.pack(fill=BOTH, expand=1)
+                return
+            else:
                 self.srch_result_msg.config(text="No records found")
+                return

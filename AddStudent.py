@@ -87,9 +87,8 @@ class AddStudentFrame:
                 messagebox.showerror("Error", "Please fill out all fields")
             elif SISMisc.id_checker(self.id_no.get()):
                 self.data[self.id_no.get()] = {'Name': self.name.get(), 'Course': self.course.get(),
-                                                    'Year': self.year.get(),
-                                                    'Gender': self.gender.get()}
-                self.studclass.saveData()
+                                               'Year': self.year.get(), 'Gender': self.gender.get()}
+                self.studclass.data_to_csv()
                 messagebox.showinfo("Success!", "Student added to database!")
                 SISMisc.display_student_table(self.display_table)
                 self.clear_data()

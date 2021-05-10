@@ -1,6 +1,9 @@
 from tkinter import messagebox
 import csv
 
+from Student import Student
+
+
 class SISMisc:
     def id_checker(id_num):
         if len(id_num) != 9:
@@ -12,13 +15,13 @@ class SISMisc:
         return False
 
     def display_student_table(display_table):
+        stud_class = Student()
+        filename = stud_class.filename
+
         display_table.delete(*display_table.get_children())
-        with open('studentlist.csv', "r", encoding="utf-8") as StudData:
-            stud_data = csv.reader(StudData, delimiter=",")
-            next(stud_data)
+        with open(filename, "r", encoding="utf-8") as StudData:
+            stud_data = csv.DictReader(StudData)
+
             for stud in stud_data:
-                data = []
-                if len(stud) > 1:
-                    for i in stud:
-                        data.append(i)
-                    display_table.insert('', 'end', values=data)
+                display_table.insert('', 'end', values=(stud['ID Number'], stud['Name'], stud['Course'],
+                                                        stud['Year'], stud['Gender']))\

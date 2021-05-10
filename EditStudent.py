@@ -1,9 +1,9 @@
 from tkinter import *
 from tkinter import ttk
 from tkinter import messagebox
-import csv
 
 from misc import SISMisc
+from Student import Student
 
 
 class EditStudentFrame:
@@ -11,12 +11,17 @@ class EditStudentFrame:
         self.edit_frame = frame
         self.display_table = table
 
+        self.stud_class = Student()
+        self.data = self.stud_class.data
+        self.filename = self.stud_class.filename
+
         self.id_no = StringVar()
         self.name = StringVar()
         self.course = StringVar()
         self.year = StringVar()
         self.gender = StringVar()
         self.rows = []
+        self.select = True
 
         # Edit
         self.edit_name_entry = Entry(self.edit_frame, textvariable=self.name, highlightthickness=2,
@@ -86,25 +91,22 @@ class EditStudentFrame:
     def update_student(self):
         msg = messagebox.askquestion("Update Student", "Are you sure you want to edit the student's information")
         if msg == "yes":
-            list = []
-            if self.name.get() == "" or self.id_no.get() == "" or self.year == "" or self.course.get() == "" \
-                    or self.gender.get() == "":
-                messagebox.showerror("Error", "Please fill out all fields")
-            elif SISMisc.id_checker(self.id_no.get()):
-                with open('studentlist.csv', "r", encoding="utf-8") as StudData:
-                    stud_data = csv.reader(StudData, delimiter=",")
-                    for stud in stud_data:
-                        if stud == self.rows:
-                            stud = [self.id_no.get(), self.name.get(), self.course.get(), self.year.get(),
-                                    self.gender.get()]
-                        list.append(stud)
-                    with open('studentlist.csv', 'w+', newline='') as csvFile:
-                        writer = csv.writer(csvFile)
-                        writer.writerows(list)
-                messagebox.showinfo("Success!", "Student information has been updated!")
-                self.clear_data()
-                SISMisc.display_student_table(self.display_table)
-            return
+            if not self.select:
+                messagebox.showerror("Error", "Select a student first")
+            else:
+                if self.name.get() == "" or self.id_no.get() == "" or self.year == "" or self.course.get() == "" \
+                        or self.gender.get() == "":
+                    messagebox.showerror("Error", "Please fill out all fields")
+                elif SISMisc.id_checker(self.id_no.get()):
+                    if self.rows[0] in self.data:
+                        self.data[self.rows[0]] = {'Name': self.name.get(), 'Course': self.course.get(),
+                                                   'Year': self.year.get(), 'Gender': self.gender.get()}
+                        self.data[self.id_no.get()] = self.data.pop(self.rows[0])
+                        self.stud_class.data_to_csv()
+                        messagebox.showinfo("Success!", "Student information has been updated!")
+                        SISMisc.display_student_table(self.display_table)
+                        self.clear_data()
+                return
         else:
             return
 
@@ -113,14 +115,17 @@ class EditStudentFrame:
         contents = self.display_table.item(cursor_row)
         rows = contents['values']
         self.clear_data()
-        try:
+
+        if rows == "":
+            messagebox.showerror("Error", "Select a student first")
+            self.select = False
+            return
+        else:
             self.edit_name_entry.insert(0, rows[1])
             self.edit_id_entry.insert(0, rows[0])
             self.edit_year_combo.insert(0, rows[3])
             self.edit_course_entry.insert(0, rows[2])
             self.edit_gender_combo.insert(0, rows[4])
             self.rows = rows
-            return
-        except IndexError:
-            messagebox.showerror("Error", "Select a student first")
+            self.select = True
             return

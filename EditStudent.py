@@ -1,8 +1,9 @@
 from tkinter import *
 from tkinter import ttk
 from tkinter import messagebox
-from misc import SISMisc
 import csv
+
+from misc import SISMisc
 
 
 class EditStudentFrame:

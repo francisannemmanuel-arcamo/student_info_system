@@ -1,13 +1,15 @@
 from tkinter import *
 from tkinter import ttk
-from misc import SISMisc
 import csv
+
+from misc import SISMisc
 
 
 class SearchStudentFrame:
     def __init__(self, frame):
         self.search_frame = frame
-# Search Frame
+
+        # Search Frame
         self.search_bar_entry = Entry(self.search_frame, highlightthickness=2, highlightbackground="#A51d23",
                                       font=("Bebas Neue", 18))
 

@@ -1,14 +1,19 @@
 from tkinter import *
 from tkinter import ttk
 from tkinter import messagebox
+
+from Student import Student
 from misc import SISMisc
-import csv
 
 
 class AddStudentFrame:
     def __init__(self, frame, table):
         self.add_frame = frame
         self.display_table = table
+
+        self.studclass = Student()
+        self.data = self.studclass.data
+        self.filename = self.studclass.filename
 
         self.id_no = StringVar()
         self.name = StringVar()
@@ -81,25 +86,13 @@ class AddStudentFrame:
                     or self.gender.get() == "":
                 messagebox.showerror("Error", "Please fill out all fields")
             elif SISMisc.id_checker(self.id_no.get()):
-                studdata = [self.id_no.get(), self.name.get(), self.course.get(), self.year.get(), self.gender.get()]
-                with open('studentlist.csv', 'a+', newline='') as csvFile:
-                    writer = csv.writer(csvFile)
-                    writer.writerows([studdata])
+                self.data[self.id_no.get()] = {'Name': self.name.get(), 'Course': self.course.get(),
+                                                    'Year': self.year.get(),
+                                                    'Gender': self.gender.get()}
+                self.studclass.saveData()
                 messagebox.showinfo("Success!", "Student added to database!")
                 SISMisc.display_student_table(self.display_table)
                 self.clear_data()
             return
         else:
             return
-
-    def display_student_table(self):
-        self.display_table.delete(*self.display_table.get_children())
-        with open('studentlist.csv', "r", encoding="utf-8") as StudData:
-            stud_data = csv.reader(StudData, delimiter=",")
-            next(stud_data)
-            for stud in stud_data:
-                data = []
-                if len(stud) > 1:
-                    for i in stud:
-                        data.append(i)
-                    self.display_table.insert('', 'end', values=data)

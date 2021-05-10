@@ -1,6 +1,5 @@
 from tkinter import *
 from tkinter import ttk
-import csv
 
 from AddStudent import AddStudentFrame
 from SearchStudent import SearchStudentFrame
@@ -14,13 +13,6 @@ class StudentGUI:
         self.frame.title("Student Information System")
         self.frame.geometry("1155x650+95+25")
         self.frame.resizable(False, False)
-        self.data = dict()
-        self.temp = dict()
-        self.filename = 'studentlist.csv'
-
-        with open(self.filename, 'w') as csvFile:
-            writer = csv.writer(csvFile)
-            writer.writerows([["ID Number", "Name", "Course", "Year Level", "Gender"]])
 
         # background frames
         bg_frame = Frame(self.frame, bg="#A51d23")

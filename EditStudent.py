@@ -21,7 +21,7 @@ class EditStudentFrame:
         self.year = StringVar()
         self.gender = StringVar()
         self.rows = []
-        self.select = True
+        self.select = False
 
         # Edit
         self.edit_name_entry = Entry(self.edit_frame, textvariable=self.name, highlightthickness=2,
@@ -89,7 +89,7 @@ class EditStudentFrame:
         self.edit_gender_combo.delete(0, END)
 
     def update_student(self):
-        msg = messagebox.askquestion("Update Student", "Are you sure you want to edit the student's information")
+        msg = messagebox.askquestion("Update Student", "Are you sure you want to update the student's information?")
         if msg == "yes":
             if not self.select:
                 messagebox.showerror("Error", "Select a student first")
@@ -97,15 +97,28 @@ class EditStudentFrame:
                 if self.name.get() == "" or self.id_no.get() == "" or self.year == "" or self.course.get() == "" \
                         or self.gender.get() == "":
                     messagebox.showerror("Error", "Please fill out all fields")
+
                 elif SISMisc.id_checker(self.id_no.get()):
-                    if self.rows[0] in self.data:
-                        self.data[self.rows[0]] = {'Name': self.name.get(), 'Course': self.course.get(),
-                                                   'Year': self.year.get(), 'Gender': self.gender.get()}
-                        self.data[self.id_no.get()] = self.data.pop(self.rows[0])
-                        self.stud_class.data_to_csv()
-                        messagebox.showinfo("Success!", "Student information has been updated!")
-                        SISMisc.display_student_table(self.display_table)
-                        self.clear_data()
+                    if not self.select:
+                        messagebox.showerror("Error", "Select a student first")
+                        return
+                    else:
+                        if self.id_no.get() in self.data:
+                            overwrite = messagebox.askquestion('Overwrite Student',
+                                                               'ID Number already in database, do you '
+                                                               'wish to overwrite the student information?'
+                                                               )
+                            if overwrite == "no":
+                                return
+
+                        if self.rows[0] in self.data:
+                            self.data[self.rows[0]] = {'Name': self.name.get(), 'Course': self.course.get(),
+                                                       'Year': self.year.get(), 'Gender': self.gender.get()}
+                            self.data[self.id_no.get()] = self.data.pop(self.rows[0])
+                            self.stud_class.data_to_csv()
+                            messagebox.showinfo("Success!", "Student information has been updated!")
+                            SISMisc.display_student_table(self.display_table)
+                            self.clear_data()
                 return
         else:
             return

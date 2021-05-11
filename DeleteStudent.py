@@ -19,7 +19,7 @@ class DeleteStudentFrame:
         self.year = StringVar()
         self.gender = StringVar()
         self.rows = []
-        self.select = True
+        self.select = False
 
         # Delete Frame
         self.del_stud_name = Label(self.delete_frame, fg="black", bg="white", font=("Bebas Neue", 16), anchor='w')
@@ -53,11 +53,11 @@ class DeleteStudentFrame:
                                font=("Bebas Neue", 20))
         delete_button.place(x=280, y=350, width=90, height=30)
 
-        self.del_stud_name.place(x=115, y=80, width=90, height=40)
-        self.del_stud_id.place(x=115, y=130, width=90, height=40)
-        self.del_stud_year.place(x=115, y=180, width=90, height=40)
-        self.del_stud_course.place(x=115, y=230, width=90, height=40)
-        self.del_stud_gender.place(x=115, y=280, width=90, height=40)
+        self.del_stud_name.place(x=115, y=80, width=250, height=40)
+        self.del_stud_id.place(x=115, y=130, width=200, height=40)
+        self.del_stud_year.place(x=115, y=180, width=200, height=40)
+        self.del_stud_course.place(x=115, y=230, width=200, height=40)
+        self.del_stud_gender.place(x=115, y=280, width=200, height=40)
 
     def clear_data(self):
         self.del_stud_name.config(text="")
@@ -67,10 +67,11 @@ class DeleteStudentFrame:
         self.del_stud_gender.config(text="")
 
     def delete_student(self):
-        msg = messagebox.askquestion('Delete Student', 'Are you sure you want to delete the student')
+        msg = messagebox.askquestion('Delete Student', 'Are you sure you want to delete the student?')
         if msg == "yes":
             if not self.select:
                 messagebox.showerror("Error", "Select a student first")
+                return
             else:
                 self.data.pop(self.rows[0], None)
                 self.stud_class.data_to_csv()

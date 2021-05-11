@@ -80,12 +80,19 @@ class AddStudentFrame:
         self.add_gender_combo.delete(0, END)
 
     def add_student(self):
-        msg = messagebox.askquestion('Add Student', 'Are you sure you want to add the student')
+        msg = messagebox.askquestion('Add Student', 'Are you sure you want to add the student?')
         if msg == "yes":
             if self.name.get() == "" or self.id_no.get() == "" or self.year == "" or self.course.get() == "" \
                     or self.gender.get() == "":
                 messagebox.showerror("Error", "Please fill out all fields")
             elif SISMisc.id_checker(self.id_no.get()):
+                if self.id_no.get() in self.data:
+                    overwrite = messagebox.askquestion('Overwrite Student', 'ID Number already in database, do you '
+                                                                            'wish to overwrite the student information?'
+                                                       )
+                    if overwrite == "no":
+                        return
+
                 self.data[self.id_no.get()] = {'Name': self.name.get(), 'Course': self.course.get(),
                                                'Year': self.year.get(), 'Gender': self.gender.get()}
                 self.studclass.data_to_csv()

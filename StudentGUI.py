@@ -6,7 +6,6 @@ from SearchStudent import SearchStudentFrame
 from EditStudent import EditStudentFrame
 from DeleteStudent import DeleteStudentFrame
 from Student import Student
-from misc import SISMisc
 
 
 class StudentGUI:
@@ -16,7 +15,7 @@ class StudentGUI:
         self.frame.geometry("1155x650+95+25")
         self.frame.resizable(False, False)
 
-        Student()
+        self.studclass = Student()
 
         # background frames
         bg_frame = Frame(self.frame, bg="#A51d23")
@@ -98,11 +97,11 @@ class StudentGUI:
         self.display_table.heading("year", text="Year")
         self.display_table.heading("gender", text="Gender")
         self.display_table['show'] = 'headings'
-        self.display_table.column("id_no", width=120)
-        self.display_table.column("name", width=210)
-        self.display_table.column("course", width=120)
+        self.display_table.column("id_no", width=80)
+        self.display_table.column("name", width=230)
+        self.display_table.column("course", width=150)
         self.display_table.column("year", width=80)
-        self.display_table.column("gender", width=95)
+        self.display_table.column("gender", width=75)
 
         self.homepage()
 
@@ -149,7 +148,7 @@ class StudentGUI:
         self.display_label.place(x=10, y=15, width=650, height=40)
         self.display_table.pack(fill=BOTH, expand=1)
 
-        SISMisc.display_student_table(self.display_table)
+        self.studclass.display_student_table(self.display_table)
 
     # buttons
         self.add_stud_button.place(x=30, y=10, width=75, height=75)

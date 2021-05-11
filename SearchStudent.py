@@ -1,7 +1,6 @@
 from tkinter import *
 from tkinter import ttk
 
-from misc import SISMisc
 from Student import Student
 
 
@@ -47,15 +46,15 @@ class SearchStudentFrame:
                                image=self.srch_btn_img, bg="#A51d23", fg="white", font=("Bebas Neue", 20))
         search_button.place(x=330, y=45, width=40, height=40)
 
-        self.srchrslts_label.place_forget()
-        self.search_result_frame.place_forget()
-        self.srch_result_msg.place_forget()
+        self.cover = Frame(self.search_frame, bg="white")
 
+        self.cover.place(x=30, y=100, width=340, height=300)
         self.search_bar_entry.delete(0, END)
 
     def search_student(self):
-        if SISMisc.id_checker(self.search_bar_entry.get()):
+        if self.studclass.id_checker(self.search_bar_entry.get()):
             self.srch_result_msg.place(x=30, y=100, height=20, width=100)
+            self.cover.place_forget()
 
             if self.search_bar_entry.get() in self.data:
                 stud = list(self.data[self.search_bar_entry.get()].values())

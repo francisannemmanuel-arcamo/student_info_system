@@ -3,7 +3,6 @@ from tkinter import ttk
 from tkinter import messagebox
 
 from Student import Student
-from misc import SISMisc
 
 
 class AddStudentFrame:
@@ -36,13 +35,7 @@ class AddStudentFrame:
         self.add_course_entry = Entry(self.add_frame, textvariable=self.course, highlightthickness=2,
                                       highlightbackground="#A51d23", font=("Bebas Neue", 18))
         self.add_gender_combo = ttk.Combobox(self.add_frame, textvariable=self.gender, font=("Bebas Neue", 20),
-                                             values=[
-                                                 "Male",
-                                                 "Female",
-                                                 "Transgender Male",
-                                                 "Transgender Female",
-                                                 "Non-conforming",
-                                                 "Other"])
+                                             values=["Male", "Female", "Other"])
 
         # add_student_interface
         self.add_frame.place(x=20, y=120, width=400, height=410)
@@ -52,25 +45,28 @@ class AddStudentFrame:
         name_label.place(x=20, y=50, width=90, height=40)
         self.add_name_entry.place(x=110, y=50, width=270, height=40)
         id_no_label = Label(self.add_frame, text="ID No.:", font=("Bebas Neue", 20), bg="#A51d23", fg="white")
-        id_no_label.place(x=20, y=100, width=90, height=40)
-        self.add_id_entry.place(x=110, y=100, width=270, height=40)
+        id_no_label.place(x=20, y=120, width=90, height=40)
+        name_format = Label(self.add_frame, text="Last Name, First Name, M.I", font=("Oswald", 10), fg="#A51d23",
+                            bg="white")
+        name_format.place(x=115, y=91, height=20)
+        self.add_id_entry.place(x=110, y=120, width=270, height=40)
         year_label = Label(self.add_frame, text="Year:", font=("Bebas Neue", 20), bg="#A51d23", fg="white")
-        year_label.place(x=20, y=150, width=90, height=40)
-        self.add_year_combo.place(x=110, y=150, width=270, height=40)
+        year_label.place(x=20, y=170, width=90, height=40)
+        self.add_year_combo.place(x=110, y=170, width=270, height=40)
         course_label = Label(self.add_frame, text="Course:", font=("Bebas Neue", 20), bg="#A51d23", fg="white")
-        course_label.place(x=20, y=200, width=90, height=40)
-        self.add_course_entry.place(x=110, y=200, width=270, height=40)
+        course_label.place(x=20, y=220, width=90, height=40)
+        self.add_course_entry.place(x=110, y=220, width=270, height=40)
         gender_label = Label(self.add_frame, text="Gender:", font=("Bebas Neue", 20), bg="#A51d23", fg="white")
-        gender_label.place(x=20, y=250, width=90, height=40)
-        self.add_gender_combo.place(x=110, y=250, width=270, height=40)
+        gender_label.place(x=20, y=270, width=90, height=40)
+        self.add_gender_combo.place(x=110, y=270, width=270, height=40)
 
         # buttons on add student
         add_info_button = Button(self.add_frame, command=self.add_student, text="Add", bg="#A51d23", fg="white",
                                  font=("Bebas Neue", 20))
-        add_info_button.place(x=170, y=330, width=90, height=30)
+        add_info_button.place(x=170, y=340, width=90, height=30)
         clear_info_button = Button(self.add_frame, command=self.clear_data, text="Clear", bg="#A51d23", fg="white",
                                    font=("Bebas Neue", 20))
-        clear_info_button.place(x=280, y=330, width=90, height=30)
+        clear_info_button.place(x=280, y=340, width=90, height=30)
 
     def clear_data(self):
         self.add_id_entry.delete(0, END)
@@ -85,7 +81,7 @@ class AddStudentFrame:
             if self.name.get() == "" or self.id_no.get() == "" or self.year == "" or self.course.get() == "" \
                     or self.gender.get() == "":
                 messagebox.showerror("Error", "Please fill out all fields")
-            elif SISMisc.id_checker(self.id_no.get()):
+            elif self.studclass.id_checker(self.id_no.get()):
                 if self.id_no.get() in self.data:
                     overwrite = messagebox.askquestion('Overwrite Student', 'ID Number already in database, do you '
                                                                             'wish to overwrite the student information?'
@@ -93,11 +89,12 @@ class AddStudentFrame:
                     if overwrite == "no":
                         return
 
-                self.data[self.id_no.get()] = {'Name': self.name.get(), 'Course': self.course.get(),
+                self.data[self.id_no.get()] = {'Name': self.name.get().upper(),
+                                               'Course': self.course.get().upper(),
                                                'Year': self.year.get(), 'Gender': self.gender.get()}
                 self.studclass.data_to_csv()
                 messagebox.showinfo("Success!", "Student added to database!")
-                SISMisc.display_student_table(self.display_table)
+                self.studclass.display_student_table(self.display_table)
                 self.clear_data()
             return
         else:

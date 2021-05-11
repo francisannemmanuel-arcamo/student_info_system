@@ -1,7 +1,6 @@
 from tkinter import *
 from tkinter import messagebox
 
-from misc import SISMisc
 from Student import Student
 
 
@@ -67,21 +66,21 @@ class DeleteStudentFrame:
         self.del_stud_gender.config(text="")
 
     def delete_student(self):
-        msg = messagebox.askquestion('Delete Student', 'Are you sure you want to delete the student?')
-        if msg == "yes":
-            if not self.select:
-                messagebox.showerror("Error", "Select a student first")
-                return
-            else:
+        if not self.select:
+            messagebox.showerror("Error", "Select a student first")
+            return
+        else:
+            msg = messagebox.askquestion('Delete Student', 'Are you sure you want to delete the student?')
+            if msg == "yes":
                 self.data.pop(self.rows[0], None)
                 self.stud_class.data_to_csv()
                 messagebox.showinfo("Success!", "Student has been deleted!")
-                SISMisc.display_student_table(self.display_table)
+                self.stud_class.display_student_table(self.display_table)
                 self.clear_data()
 
                 return
-        else:
-            return
+            else:
+                return
 
     def select_stud(self):
         cursor_row = self.display_table.focus()

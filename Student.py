@@ -1,5 +1,6 @@
 import os
 import csv
+from tkinter import messagebox
 
 
 class Student:
@@ -34,3 +35,22 @@ class Student:
                     temp[key] = value
                 datalist.append(temp)
             writer.writerows(datalist)
+
+    def display_student_table(self, display_table):
+        display_table.delete(*display_table.get_children())
+        with open(self.filename, "r", encoding="utf-8") as StudData:
+            stud_data = csv.DictReader(StudData)
+
+            for stud in stud_data:
+                display_table.insert('', 0, values=(stud['ID Number'], stud['Name'], stud['Course'], stud['Year'],
+                                                    stud['Gender']))\
+
+
+    def id_checker(self, id_num):
+        if len(id_num) != 9:
+            messagebox.showerror("Error", "Invalid ID Number")
+        elif id_num[4] != '-' or not id_num.replace("-", "").isdigit():
+            messagebox.showerror("Error", "Invalid ID Number")
+        else:
+            return True
+        return False

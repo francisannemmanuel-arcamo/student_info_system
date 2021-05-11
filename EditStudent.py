@@ -2,7 +2,6 @@ from tkinter import *
 from tkinter import ttk
 from tkinter import messagebox
 
-from misc import SISMisc
 from Student import Student
 
 
@@ -38,13 +37,7 @@ class EditStudentFrame:
         self.edit_course_entry = Entry(self.edit_frame, textvariable=self.course, font=("Bebas Neue", 18),
                                        highlightthickness=2, highlightbackground="#A51d23")
         self.edit_gender_combo = ttk.Combobox(self.edit_frame, textvariable=self.gender, font=("Bebas Neue", 20),
-                                              values=[
-                                                  "Male",
-                                                  "Female",
-                                                  "Transgender Male",
-                                                  "Transgender Female",
-                                                  "Non-conforming",
-                                                  "Other"])
+                                              values=["Male", "Female", "Other"])
 
         self.edit_frame.place(x=20, y=120, width=400, height=410)
 
@@ -57,29 +50,32 @@ class EditStudentFrame:
         choose_stud_btn.place(x=280, y=28, width=90, height=30)
 
         # attributes on edit student feature
+        name_format = Label(self.edit_frame, text="Last Name, First Name, M.I", font=("Oswald", 10), fg="#A51d23",
+                            bg="white")
+        name_format.place(x=115, y=121, height=20)
         name_label = Label(self.edit_frame, text="Name:", font=("Bebas Neue", 20), bg="#A51d23", fg="white")
         name_label.place(x=20, y=80, width=90, height=40)
         self.edit_name_entry.place(x=110, y=80, width=270, height=40)
         id_no_label = Label(self.edit_frame, text="ID No.:", font=("Bebas Neue", 20), bg="#A51d23", fg="white")
-        id_no_label.place(x=20, y=130, width=90, height=40)
-        self.edit_id_entry.place(x=110, y=130, width=270, height=40)
+        id_no_label.place(x=20, y=150, width=90, height=40)
+        self.edit_id_entry.place(x=110, y=150, width=270, height=40)
         year_label = Label(self.edit_frame, text="Year:", font=("Bebas Neue", 20), bg="#A51d23", fg="white")
-        year_label.place(x=20, y=180, width=90, height=40)
-        self.edit_year_combo.place(x=110, y=180, width=270, height=40)
+        year_label.place(x=20, y=200, width=90, height=40)
+        self.edit_year_combo.place(x=110, y=200, width=270, height=40)
         course_label = Label(self.edit_frame, text="Course:", font=("Bebas Neue", 20), bg="#A51d23", fg="white")
-        course_label.place(x=20, y=230, width=90, height=40)
-        self.edit_course_entry.place(x=110, y=230, width=270, height=40)
+        course_label.place(x=20, y=250, width=90, height=40)
+        self.edit_course_entry.place(x=110, y=250, width=270, height=40)
         gender_label = Label(self.edit_frame, text="Gender:", font=("Bebas Neue", 20), bg="#A51d23", fg="white")
-        gender_label.place(x=20, y=280, width=90, height=40)
-        self.edit_gender_combo.place(x=110, y=280, width=270, height=40)
+        gender_label.place(x=20, y=300, width=90, height=40)
+        self.edit_gender_combo.place(x=110, y=300, width=270, height=40)
 
         # buttons for add student feature
         update_info_button = Button(self.edit_frame, command=self.update_student, text="Update", bg="#A51d23",
                                     fg="white", font=("Bebas Neue", 20))
-        update_info_button.place(x=170, y=350, width=90, height=30)
+        update_info_button.place(x=170, y=360, width=90, height=30)
         clear_info_button = Button(self.edit_frame, command=self.clear_data, text="Clear", bg="#A51d23", fg="white",
                                    font=("Bebas Neue", 20))
-        clear_info_button.place(x=280, y=350, width=90, height=30)
+        clear_info_button.place(x=280, y=360, width=90, height=30)
 
     def clear_data(self):
         self.edit_id_entry.delete(0, END)
@@ -89,39 +85,37 @@ class EditStudentFrame:
         self.edit_gender_combo.delete(0, END)
 
     def update_student(self):
-        msg = messagebox.askquestion("Update Student", "Are you sure you want to update the student's information?")
-        if msg == "yes":
-            if not self.select:
-                messagebox.showerror("Error", "Select a student first")
-            else:
+        if not self.select:
+            messagebox.showerror("Error", "Select a student first")
+            return
+        else:
+            msg = messagebox.askquestion("Update Student", "Are you sure you want to update the student's information?")
+            if msg == "yes":
                 if self.name.get() == "" or self.id_no.get() == "" or self.year == "" or self.course.get() == "" \
                         or self.gender.get() == "":
                     messagebox.showerror("Error", "Please fill out all fields")
 
-                elif SISMisc.id_checker(self.id_no.get()):
-                    if not self.select:
-                        messagebox.showerror("Error", "Select a student first")
-                        return
-                    else:
-                        if self.id_no.get() in self.data:
-                            overwrite = messagebox.askquestion('Overwrite Student',
-                                                               'ID Number already in database, do you '
-                                                               'wish to overwrite the student information?'
-                                                               )
-                            if overwrite == "no":
-                                return
+                elif self.stud_class.id_checker(self.id_no.get()):
+                    if self.id_no.get() in self.data and self.id_no.get() != self.rows[0]:
+                        overwrite = messagebox.askquestion('Overwrite Student',
+                                                           'ID Number already in database, do you '
+                                                           'wish to overwrite the student information?'
+                                                           )
+                        if overwrite == "no":
+                            return
 
-                        if self.rows[0] in self.data:
-                            self.data[self.rows[0]] = {'Name': self.name.get(), 'Course': self.course.get(),
-                                                       'Year': self.year.get(), 'Gender': self.gender.get()}
-                            self.data[self.id_no.get()] = self.data.pop(self.rows[0])
-                            self.stud_class.data_to_csv()
-                            messagebox.showinfo("Success!", "Student information has been updated!")
-                            SISMisc.display_student_table(self.display_table)
-                            self.clear_data()
+                    if self.rows[0] in self.data:
+                        self.data[self.rows[0]] = {'Name': self.name.get().upper(),
+                                                   'Course': self.course.get().upper(),
+                                                   'Year': self.year.get(), 'Gender': self.gender.get()}
+                        self.data[self.id_no.get()] = self.data.pop(self.rows[0])
+                        self.stud_class.data_to_csv()
+                        messagebox.showinfo("Success!", "Student information has been updated!")
+                        self.stud_class.display_student_table(self.display_table)
+                        self.clear_data()
                 return
-        else:
-            return
+            else:
+                return
 
     def select_stud(self):
         cursor_row = self.display_table.focus()

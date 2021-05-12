@@ -2,7 +2,9 @@
 simple student info system app
 
 
-StudentGUI.py - main py file for the GUI of the app (just run this app only)
+
+
+StudentGUI.py - main py file for the GUI of the app (just run this code only)
 
 Student.py - py file imported to store variables and functions common to the different features
 

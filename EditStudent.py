@@ -29,11 +29,11 @@ class EditStudentFrame:
                                    highlightbackground="#A51d23", font=("Bebas Neue", 20))
         self.edit_year_combo = ttk.Combobox(self.edit_frame, textvariable=self.year, font=("Bebas Neue", 20),
                                             values=[
-                                                "First Year",
-                                                "Second Year",
-                                                "Third Year",
-                                                "Fourth Year",
-                                                "Fifth Year"])
+                                                "1st Year",
+                                                "2nd Year",
+                                                "3rd Year",
+                                                "4th Year",
+                                                "5th Year"])
         self.edit_course_entry = Entry(self.edit_frame, textvariable=self.course, font=("Bebas Neue", 18),
                                        highlightthickness=2, highlightbackground="#A51d23")
         self.edit_gender_combo = ttk.Combobox(self.edit_frame, textvariable=self.gender, font=("Bebas Neue", 20),
